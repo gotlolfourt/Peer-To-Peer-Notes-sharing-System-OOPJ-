@@ -3,11 +3,12 @@ package com.p2pnotes.model;
 /**
  * Concrete subclass representing revision cheat-sheets with formula arrays and key points.
  * Demonstrates:
- * - Inheritance (extends BaseNote) (Module 03, Experiment 3)
- * - 1D Arrays of Strings (formulas) (Module 01/05)
- * - Array iteration (enhanced for loop) (Module 01, Experiment 1)
- * - String split and trim methods (Module 05, Experiment 1)
- * - StringBuilder for performance-conscious string building (Module 05, Experiment 1)
+ * - Inheritance (extends BaseNote)
+ * - 1D Arrays of Strings (formulas)
+ * - Array iteration (enhanced for loop)
+ * - String split and trim methods
+ * - StringBuilder for performance-conscious string building
+ * - Method Overriding (getNoteType, toString)
  */
 public class SummaryCheatSheet extends BaseNote {
     private String examTarget;
@@ -35,9 +36,13 @@ public class SummaryCheatSheet extends BaseNote {
     }
 
     @Override
+    public String getNoteType() {
+        return "CHEAT_SHEET";
+    }
+
+    @Override
     public void displayDetails() {
         super.displayDetails();
-        System.out.println("Note Type    : Exam Revision Cheat-Sheet");
         System.out.println("Target Exam  : " + this.examTarget);
         int formulaCount = (this.keyFormulas != null) ? this.keyFormulas.length : 0;
         System.out.println("Formula Count: " + formulaCount);
@@ -85,5 +90,11 @@ public class SummaryCheatSheet extends BaseNote {
         }
         sb.append("Points Summary:\n").append(this.keyPointsSummary).append("\n");
         return sb.toString();
+    }
+
+    @Override
+    public String toString() {
+        int count = (this.keyFormulas != null) ? this.keyFormulas.length : 0;
+        return super.toString() + String.format(" [Target: %s, Formulas: %d]", this.examTarget, count);
     }
 }

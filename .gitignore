@@ -2,8 +2,16 @@
 *.class
 bin/
 
-# Package Files #
+# Runtime data & note storage
+p2p_data/
+p2p_notes_storage/
+test_data/
+test_storage/
+*.db
+
+# Package Files (allow lib/ jars)
 *.jar
+!lib/*.jar
 *.war
 *.nar
 *.ear

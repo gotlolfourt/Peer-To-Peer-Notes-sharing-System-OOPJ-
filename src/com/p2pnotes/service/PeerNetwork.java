@@ -1,15 +1,23 @@
 package com.p2pnotes.service;
 
+import com.p2pnotes.io.FileManager;
 import com.p2pnotes.model.BaseNote;
 import com.p2pnotes.model.LectureNote;
+import com.p2pnotes.model.ProfessorPeer;
+import com.p2pnotes.model.StudentPeer;
 import com.p2pnotes.model.SummaryCheatSheet;
 import com.p2pnotes.model.User;
+import com.p2pnotes.thread.TransferTask;
+import com.p2pnotes.transfer.TransferService;
+import com.p2pnotes.util.AppConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.Vector;
 
@@ -17,15 +25,20 @@ import java.util.Vector;
  * Service simulating the Peer-to-Peer Network Directory and Shared Registry.
  * 
  * Demonstrates:
- * - HashMap (java.util.HashMap) for key-value peer lookups (Module 05, Experiment 5)
- * - Vector (java.util.Vector) for synchronized collection of public network notes (Module 05, Experiment 5)
- * - Vector Iterator (java.util.Iterator) for traversing elements (Module 05, Experiment 5)
- * - HashSet (java.util.HashSet) for unique department tracking (Module 05, Experiment 5)
- * - Static initialization concepts (Module 02, Experiment 2)
- * - String methods: toLowerCase(), contains(), trim(), equalsIgnoreCase() (Module 05, Experiment 1)
- * - Formatted printing (System.out.printf) (Module 01, Experiment 1)
+ * - Implementing Interfaces (implements TransferService)
+ * - Java Collections:
+ *     - HashMap (peers lookup)
+ *     - Vector (thread-safe public note registry)
+ *     - HashSet (active departments set)
+ *     - LinkedList as Queue (java.util.Queue and java.util.LinkedList for transfer tasks and requests)
+ * - Method Overloading:
+ *     - searchNotes(keyword)
+ *     - searchNotes(keyword, departmentFilter)
+ *     - searchNotes(keyword, departmentFilter, minViews)
+ * - Multithreading & Synchronization (synchronized methods for thread-safe downloads)
+ * - Polymorphism (managing User, StudentPeer, ProfessorPeer, LectureNote, SummaryCheatSheet)
  */
-public class PeerNetwork {
+public class PeerNetwork implements TransferService {
     // Map of username -> User object (Key-Value pairs)
     private Map<String, User> peers;
 
@@ -35,23 +48,35 @@ public class PeerNetwork {
     // Set of distinct college departments active in the network
     private Set<String> activeDepartments;
 
-    // Supported categories array (1D array from Module 01/05)
+    // Queue implemented with LinkedList for managing queued background transfer requests
+    private Queue<TransferTask> transferQueue;
+
+    // Queue for network broadcast announcements
+    private Queue<String> broadcastQueue;
+
+    // FileManager reference for note transfers
+    private FileManager fileManager;
+
+    // Supported categories array (1D array)
     public static final String[] SUPPORTED_DEPARTMENTS = {"CSE", "AIML", "ECE", "MECHANICAL", "GENERAL"};
 
     public PeerNetwork() {
         this.peers = new HashMap<String, User>();
         this.publicNoteRegistry = new Vector<BaseNote>();
         this.activeDepartments = new HashSet<String>();
+        this.transferQueue = new LinkedList<TransferTask>();
+        this.broadcastQueue = new LinkedList<String>();
+        this.fileManager = new FileManager();
         initializeSampleNetwork();
     }
 
     /**
      * Initializes simulated peers and starter notes.
-     * Demonstrates: OOP object creation, arrays, polymorphism, collection population.
+     * Demonstrates: OOP object creation, inheritance (StudentPeer, ProfessorPeer), polymorphism.
      */
     private void initializeSampleNetwork() {
-        // Peer 1: Alice (CSE)
-        User alice = new User("alice_cse", "pass123", "Alice DSouza", "CSE");
+        // Peer 1: Alice (CSE) - StudentPeer
+        StudentPeer alice = new StudentPeer("alice_cse", "pass123", "Alice DSouza", "CSE", "21CS042", 4);
         LectureNote javaOopNote = new LectureNote(
             "Java OOP Principles & Inheritance",
             alice.getFullName(),
@@ -67,9 +92,10 @@ public class PeerNetwork {
         alice.addSharedNote(javaOopNote);
         registerPeer(alice);
         this.publicNoteRegistry.add(javaOopNote);
+        AppConstants.incrementNotesShared();
 
-        // Peer 2: Bob (AIML)
-        User bob = new User("bob_aiml", "pass123", "Bob Fernandes", "AIML");
+        // Peer 2: Bob (AIML) - StudentPeer
+        StudentPeer bob = new StudentPeer("bob_aiml", "pass123", "Bob Fernandes", "AIML", "21AI015", 4);
         String[] mlFormulas = {
             "Euclidean Distance = sqrt(sum((x_i - y_i)^2))",
             "Sigmoid(z) = 1 / (1 + e^(-z))",
@@ -86,25 +112,30 @@ public class PeerNetwork {
         bob.addSharedNote(mlCheatSheet);
         registerPeer(bob);
         this.publicNoteRegistry.add(mlCheatSheet);
+        AppConstants.incrementNotesShared();
 
-        // Peer 3: Charlie (ECE)
-        User charlie = new User("charlie_ece", "pass123", "Charlie Pinto", "ECE");
+        // Peer 3: Dr. Charlie (ECE) - ProfessorPeer demonstrating specialized faculty subclass
+        ProfessorPeer charlie = new ProfessorPeer("charlie_ece", "pass123", "Dr. Charlie Pinto", "ECE", "Associate Professor", "Cabin E-204");
         LectureNote dsdNote = new LectureNote(
             "Digital Electronics & Logic Gates",
             charlie.getFullName(),
             "ECE",
             "ECC301",
-            "Prof. Rao",
+            "Dr. Charlie Pinto",
             2,
             "AND gate gives 1 if all inputs are 1. OR gate gives 1 if any input is 1. De Morgan's Law: (A.B)' = A' + B'."
         );
         charlie.addSharedNote(dsdNote);
         registerPeer(charlie);
         this.publicNoteRegistry.add(dsdNote);
+        AppConstants.incrementNotesShared();
+
+        // Broadcast initial greeting
+        broadcastQueue.offer("P2P Network initialized with " + peers.size() + " starter peers and " + publicNoteRegistry.size() + " public notes.");
     }
 
-    // Register a new peer in the network
-    public boolean registerPeer(User user) {
+    // Register a new peer in the network (synchronized for thread safety)
+    public synchronized boolean registerPeer(User user) {
         if (user == null || user.getUsername() == null || user.getUsername().trim().isEmpty()) {
             return false;
         }
@@ -114,6 +145,7 @@ public class PeerNetwork {
         }
         this.peers.put(key, user);
         this.activeDepartments.add(user.getDepartment().toUpperCase());
+        AppConstants.incrementRegisteredUsers();
         return true;
     }
 
@@ -133,15 +165,17 @@ public class PeerNetwork {
         return null;
     }
 
-    // Publish a note to the network registry
-    public void publishNote(User peer, BaseNote note) {
+    // Publish a note to the network registry (synchronized)
+    public synchronized void publishNote(User peer, BaseNote note) {
         peer.addSharedNote(note);
         this.publicNoteRegistry.add(note);
         this.activeDepartments.add(note.getDepartment().toUpperCase());
+        AppConstants.incrementNotesShared();
+        broadcastQueue.offer("New Note Shared: '" + note.getTitle() + "' by " + peer.getFullName());
     }
 
-    // Remove a note from the network registry
-    public boolean unpublishNote(User peer, int noteId) {
+    // Remove a note from the network registry (synchronized)
+    public synchronized boolean unpublishNote(User peer, int noteId) {
         boolean removedFromUser = peer.removeSharedNote(noteId);
         if (removedFromUser) {
             // Remove from public registry using Vector remove
@@ -167,8 +201,27 @@ public class PeerNetwork {
         return null;
     }
 
-    // Search notes using String manipulation (toLowerCase, contains, equalsIgnoreCase)
+    // ================= METHOD OVERLOADING FOR SEARCH =================
+
+    /**
+     * Method Overloading Variant 1: Search notes by keyword across all departments.
+     */
+    public ArrayList<BaseNote> searchNotes(String keyword) {
+        return searchNotes(keyword, "ALL");
+    }
+
+    /**
+     * Method Overloading Variant 2: Search notes by keyword AND department filter.
+     * Uses Vector Iterator to sequentially access elements.
+     */
     public ArrayList<BaseNote> searchNotes(String keyword, String departmentFilter) {
+        return searchNotes(keyword, departmentFilter, 0);
+    }
+
+    /**
+     * Method Overloading Variant 3: Search notes by keyword, department filter, AND minimum views.
+     */
+    public ArrayList<BaseNote> searchNotes(String keyword, String departmentFilter, int minViews) {
         ArrayList<BaseNote> results = new ArrayList<BaseNote>();
         String cleanKeyword = (keyword != null) ? keyword.trim().toLowerCase() : "";
         String cleanDept = (departmentFilter != null) ? departmentFilter.trim() : "";
@@ -177,6 +230,10 @@ public class PeerNetwork {
         Iterator<BaseNote> it = this.publicNoteRegistry.iterator();
         while (it.hasNext()) {
             BaseNote note = it.next();
+            if (note.getAccessCount() < minViews) {
+                continue;
+            }
+
             boolean matchesDept = cleanDept.isEmpty() || cleanDept.equalsIgnoreCase("ALL") 
                                   || note.getDepartment().equalsIgnoreCase(cleanDept);
             
@@ -191,8 +248,13 @@ public class PeerNetwork {
         return results;
     }
 
-    // Download note: peer receives copy, author gets reputation points
-    public boolean downloadNoteToPeer(User downloader, int noteId) {
+    // ================= DOWNLOAD AND TRANSFER OPERATIONS =================
+
+    /**
+     * Synchronous download of a note to a peer's local collection.
+     * Synchronized method prevents race conditions on download counters and author reputation.
+     */
+    public synchronized boolean downloadNoteToPeer(User downloader, int noteId) {
         BaseNote note = findNoteById(noteId);
         if (note == null) {
             return false;
@@ -206,6 +268,7 @@ public class PeerNetwork {
         boolean added = downloader.saveDownloadedNote(note);
         if (added) {
             note.incrementAccess();
+            AppConstants.incrementDownloads();
             // Reward author
             for (User authorPeer : this.peers.values()) {
                 if (authorPeer.getFullName().equalsIgnoreCase(note.getAuthor())) {
@@ -218,11 +281,46 @@ public class PeerNetwork {
         return false;
     }
 
+    /**
+     * Implementation of TransferService interface:
+     * Enqueues and initiates an asynchronous multi-threaded file transfer.
+     */
+    @Override
+    public void initiateTransfer(BaseNote note, String downloaderUsername) {
+        String taskId = "TX-" + (transferQueue.size() + 1);
+        TransferTask task = new TransferTask(taskId, note, downloaderUsername, this.fileManager);
+        this.transferQueue.offer(task); // Enqueue in Queue (LinkedList)
+
+        // Launch in a separate thread
+        Thread transferThread = new Thread(task, "TransferThread-" + taskId);
+        transferThread.start();
+    }
+
+    @Override
+    public int getActiveTransferCount() {
+        return TransferTask.getActiveTransfers();
+    }
+
+    @Override
+    public int getCompletedTransferCount() {
+        return TransferTask.getCompletedTransfers();
+    }
+
+    public Queue<TransferTask> getTransferQueue() {
+        return this.transferQueue;
+    }
+
+    public Queue<String> getBroadcastQueue() {
+        return this.broadcastQueue;
+    }
+
     // Display summary of network status
     public void displayNetworkStatus() {
         System.out.println("\n============= P2P NETWORK OVERVIEW =============");
         System.out.printf("Active Registered Peers : %d\n", this.peers.size());
         System.out.printf("Public Notes in Network : %d\n", this.publicNoteRegistry.size());
+        System.out.printf("Total Global Downloads  : %d\n", AppConstants.getTotalDownloads());
+        System.out.printf("Active Transfers Now    : %d\n", TransferTask.getActiveTransfers());
         System.out.print("Departments Represented : ");
         for (String dept : this.activeDepartments) {
             System.out.print("[" + dept + "] ");
@@ -236,5 +334,9 @@ public class PeerNetwork {
 
     public Map<String, User> getPeers() {
         return this.peers;
+    }
+
+    public FileManager getFileManager() {
+        return this.fileManager;
     }
 }

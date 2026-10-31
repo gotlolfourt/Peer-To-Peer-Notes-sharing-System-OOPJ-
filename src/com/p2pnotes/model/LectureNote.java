@@ -3,11 +3,11 @@ package com.p2pnotes.model;
 /**
  * Concrete subclass representing detailed classroom lecture notes.
  * Demonstrates:
- * - Inheritance (extends BaseNote) (Module 03, Experiment 3)
- * - "super" keyword to invoke parent constructor and parent method (Module 03, Experiment 3)
- * - Method Overriding with @Override annotation (Module 03, Experiment 3)
- * - String manipulation and case conversion (Module 05, Experiment 1)
- * - StringBuilder for mutable string construction (Module 05, Experiment 1)
+ * - Inheritance (extends BaseNote)
+ * - "super" keyword to invoke parent constructor and parent method
+ * - Method Overriding with @Override annotation
+ * - String manipulation and case conversion
+ * - StringBuilder for mutable string construction
  */
 public class LectureNote extends BaseNote {
     private String courseCode;
@@ -41,11 +41,15 @@ public class LectureNote extends BaseNote {
         return this.content;
     }
 
+    @Override
+    public String getNoteType() {
+        return "LECTURE_NOTE";
+    }
+
     // Overriding parent displayDetails to add lecture-specific attributes
     @Override
     public void displayDetails() {
         super.displayDetails(); // Call parent class displayDetails
-        System.out.println("Note Type    : Classroom Lecture Note");
         System.out.println("Course Code  : " + this.courseCode);
         System.out.println("Professor    : " + this.professorName);
         System.out.println("Lecture No.  : " + this.lectureNumber);
@@ -74,5 +78,10 @@ public class LectureNote extends BaseNote {
         sb.append("Lecture No. : ").append(this.lectureNumber).append("\n");
         sb.append("Notes Body  :\n").append(this.content).append("\n");
         return sb.toString();
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + String.format(" [Course: %s, Lec #%d]", this.courseCode, this.lectureNumber);
     }
 }

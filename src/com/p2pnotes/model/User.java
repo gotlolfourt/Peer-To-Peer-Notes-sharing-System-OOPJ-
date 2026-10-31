@@ -1,5 +1,6 @@
 package com.p2pnotes.model;
 
+import com.p2pnotes.auth.Authenticatable;
 import java.util.ArrayList;
 
 /**
@@ -8,12 +9,20 @@ import java.util.ArrayList;
  * and locally downloaded notes.
  * 
  * Demonstrates:
- * - Encapsulation (private fields, getters, setters) (Module 02, Experiment 2)
- * - ArrayList (java.util.ArrayList) for dynamic collections (Module 05, Experiment 5)
- * - Static nested class (PeerStats) (Module 02, Experiment 2)
- * - String comparison (equals) (Module 05, Experiment 1)
+ * - Implementing Interfaces (implements Authenticatable)
+ * - Encapsulation (private fields, getters, setters)
+ * - Static variables (tracked user count)
+ * - Method Overloading (searchNotes by keyword, and by keyword + department)
+ * - Method Overriding (toString)
+ * - ArrayList (java.util.ArrayList) for dynamic collections
+ * - Static nested class (PeerStats)
+ * - String comparison (equals, equalsIgnoreCase)
  */
-public class User {
+public class User implements Authenticatable {
+    // Static variable to track total instances of User created
+    private static int totalUsersCreated = 0;
+
+    // Private fields enforcing encapsulation
     private String username;
     private String password;
     private String fullName;
@@ -24,7 +33,7 @@ public class User {
     private ArrayList<BaseNote> sharedNotes;     // Notes this peer shares with network
     private ArrayList<BaseNote> downloadedNotes; // Notes this peer has copied from other peers
 
-    // Static nested class demonstrating Module 02 inner class concept
+    // Static nested class demonstrating inner class concept
     public static class PeerStats {
         private int sharedCount;
         private int downloadedCount;
@@ -41,6 +50,18 @@ public class User {
             System.out.println("  Downloaded Notes Copied  : " + this.downloadedCount);
             System.out.println("  Total Note Views Earned  : " + this.totalViewsReceived);
         }
+
+        public int getSharedCount() {
+            return sharedCount;
+        }
+
+        public int getDownloadedCount() {
+            return downloadedCount;
+        }
+
+        public int getTotalViewsReceived() {
+            return totalViewsReceived;
+        }
     }
 
     public User(String username, String password, String fullName, String department) {
@@ -51,11 +72,28 @@ public class User {
         this.reputationScore = 10; // Default starting reputation
         this.sharedNotes = new ArrayList<BaseNote>();
         this.downloadedNotes = new ArrayList<BaseNote>();
+        totalUsersCreated++;
+    }
+
+    // Static method accessing static variable
+    public static int getTotalUsersCreated() {
+        return totalUsersCreated;
     }
 
     // Getters and Setters
+    @Override
     public String getUsername() {
         return this.username;
+    }
+
+    public String getPassword() {
+        return this.password;
+    }
+
+    public void setPassword(String password) {
+        if (password != null && !password.trim().isEmpty()) {
+            this.password = password.trim();
+        }
     }
 
     public String getFullName() {
@@ -78,6 +116,10 @@ public class User {
         return this.reputationScore;
     }
 
+    public void setReputationScore(int reputationScore) {
+        this.reputationScore = reputationScore;
+    }
+
     public void addReputation(int points) {
         this.reputationScore += points;
     }
@@ -90,9 +132,18 @@ public class User {
         return this.downloadedNotes;
     }
 
-    // Check credentials (exact content comparison with equals)
+    // Implementation of Authenticatable interface method
+    @Override
     public boolean verifyPassword(String inputPassword) {
+        if (inputPassword == null) {
+            return false;
+        }
         return this.password.equals(inputPassword);
+    }
+
+    @Override
+    public String getRole() {
+        return "STUDENT_PEER";
     }
 
     // Add a note created by this peer
@@ -125,6 +176,43 @@ public class User {
         return true;
     }
 
+    // Method Overloading Variant 1: search local notes by keyword
+    public ArrayList<BaseNote> searchMyNotes(String keyword) {
+        ArrayList<BaseNote> matches = new ArrayList<>();
+        if (keyword == null || keyword.trim().isEmpty()) {
+            matches.addAll(this.sharedNotes);
+            matches.addAll(this.downloadedNotes);
+            return matches;
+        }
+        String cleanKeyword = keyword.trim().toLowerCase();
+        for (BaseNote n : this.sharedNotes) {
+            if (n.getTitle().toLowerCase().contains(cleanKeyword) || n.getAuthor().toLowerCase().contains(cleanKeyword)) {
+                matches.add(n);
+            }
+        }
+        for (BaseNote n : this.downloadedNotes) {
+            if (n.getTitle().toLowerCase().contains(cleanKeyword) || n.getAuthor().toLowerCase().contains(cleanKeyword)) {
+                matches.add(n);
+            }
+        }
+        return matches;
+    }
+
+    // Method Overloading Variant 2: search local notes by keyword AND department
+    public ArrayList<BaseNote> searchMyNotes(String keyword, String department) {
+        ArrayList<BaseNote> matches = new ArrayList<>();
+        ArrayList<BaseNote> keywordMatches = searchMyNotes(keyword);
+        if (department == null || department.trim().isEmpty() || department.equalsIgnoreCase("ALL")) {
+            return keywordMatches;
+        }
+        for (BaseNote n : keywordMatches) {
+            if (n.getDepartment().equalsIgnoreCase(department.trim())) {
+                matches.add(n);
+            }
+        }
+        return matches;
+    }
+
     // Get statistics using the static nested class
     public PeerStats calculateStats() {
         int totalViews = 0;
@@ -136,6 +224,7 @@ public class User {
 
     public void displayProfile() {
         System.out.println("\n----------------- PEER PROFILE -----------------");
+        System.out.println("Role             : " + getRole());
         System.out.println("Username         : @" + this.username);
         System.out.println("Full Name        : " + this.fullName);
         System.out.println("Department       : " + this.department);
@@ -143,5 +232,12 @@ public class User {
         PeerStats stats = calculateStats();
         stats.printSummary();
         System.out.println("------------------------------------------------\n");
+    }
+
+    // Method Overriding: toString() from Object class
+    @Override
+    public String toString() {
+        return String.format("[%s] %s (@%s) | Dept: %s | Rep: %d",
+                getRole(), this.fullName, this.username, this.department, this.reputationScore);
     }
 }
