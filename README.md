@@ -1,6 +1,6 @@
 # Peer-to-Peer Notes Sharing System (OOPJ)
 
-A console-based Peer-to-Peer (P2P) Notes Sharing application developed in Java as part of the Object Oriented Programming with Java (OOPJ) coursework.
+A console-based Peer-to-Peer Notes Sharing application developed in Java as part of the Object Oriented Programming with Java (OOPJ) coursework.
 
 ---
 
