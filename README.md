@@ -1,6 +1,8 @@
-# Peer-to-Peer Notes Sharing System (Java OOPJ)
+# Peer-to-Peer Notes Sharing System (Java OOPJ & 3D Web Frontend)
 
-A modular, enterprise-ready, console-and-REST Peer-to-Peer (P2P) Notes Sharing application developed in Java as part of the Object-Oriented Programming with Java (OOPJ) coursework.
+A modular, enterprise-ready Peer-to-Peer (P2P) Notes Sharing platform featuring a **Core Java OOP backend** (with SQLite JDBC, concurrency, and an embedded REST server) and an **award-winning, futuristic 3D editorial web frontend (SHARENOTE)**.
+
+> **"Knowledge is better when it is shared."**
 
 ---
 
@@ -10,43 +12,68 @@ A modular, enterprise-ready, console-and-REST Peer-to-Peer (P2P) Notes Sharing a
 In academic environments, students and faculty often struggle with fragmented platforms for sharing lecture notes, revision guides, and exam cheat-sheets. Centralized repositories suffer from single points of failure, lack of peer reputation tracking, and cumbersome interfaces. 
 
 ### Solution
-This application simulates a decentralized **Peer-to-Peer (P2P) network** where autonomous peers (students and faculty) contribute, review, download, persist, and verify study materials with built-in reputation tracking, local disk caching, database persistence, multithreaded file transfer simulation, and an embedded REST API.
+This application combines:
+1. **Decentralized Java P2P Core**: Autonomous peers (students and faculty) contribute, review, download, persist, and verify study materials with built-in reputation tracking, local disk caching, SQLite database persistence, multithreaded file transfer simulation, and an embedded REST API.
+2. **Award-Winning 3D Editorial Frontend**: A dark, futuristic, Awwwards-inspired web experience with deep ink backgrounds (`#101211`), acid-lime accents (`#D5F36A`), Swiss typography, interactive Three.js 3D knowledge ecosystems, and live peer network visualizations.
 
 ---
 
-## 🎯 Objectives
-- Demonstrate full mastery of **Core Object-Oriented Programming (OOP)**: encapsulation, inheritance, polymorphism, abstraction, and interfaces.
-- Utilize standard **Java Collections Framework**: `ArrayList`, `HashMap`, `HashSet`, `Vector`, and `LinkedList` (as a `Queue`).
-- Implement robust **File Handling**: buffered reading, writing, copying, deletion, and path validation.
-- Implement robust **Multithreading**: concurrent file downloads with `Runnable`, background daemon maintenance with `Thread`, and synchronization.
-- Implement persistent relational storage with **JDBC**: SQLite database operations using `PreparedStatement` to prevent SQL injection.
-- Expose system capabilities over an embedded **REST API**: HTTP server supporting GET, POST, and DELETE endpoints with JSON responses.
-- Enforce strict **Exception Handling**: custom exception hierarchies and try-with-resources.
+## 🎨 Creative Direction & Visual Identity (Frontend)
+
+- **Design Philosophy**: High-end digital product design inspired by modern Swiss typography, experimental WebGL interactions, and editorial publications.
+- **Color Palette**:
+  - Background: Deep ink black (`#101211`)
+  - Surface & Cards: Warm charcoal (`#191D19` / `#151816`)
+  - Primary Accent: Acid lime (`#D5F36A`)
+  - Secondary Accent: Muted sage (`#A5B89B`)
+  - Text: Warm ivory (`#F1EFE5`)
+  - Secondary Text: Muted grey (`#969B91`)
+  - Borders: Subtle olive grey (`#343A32`)
+- **Typography**:
+  - Headings: `Space Grotesk`
+  - Body: `Manrope`
+  - Editorial Accents: `Instrument Serif` (italic)
+  - Technical Badges: `IBM Plex Mono`
 
 ---
 
-## ✨ Features
+## 🌟 Key Features
 
-1. **Decentralized Peer Network**:
-   - Distinct peer roles: `StudentPeer` (with student ID and semester) and `ProfessorPeer` (with verified faculty status and cabin location).
-   - Peer reputation system rewarding contributors when notes are downloaded.
-2. **Polymorphic Note Hierarchy**:
-   - `LectureNote`: Detailed class notes, instructor details, course codes, and lecture numbers.
-   - `SummaryCheatSheet`: High-yield revision guides with formula arrays and bullet-point summaries.
-3. **Advanced Search & Filtering**:
-   - Overloaded search methods supporting keyword queries, department filtering, and minimum view thresholds.
-4. **Concurrent Multi-threaded Transfers**:
-   - Simulates realistic non-blocking file transfers with progress updates across multiple threads.
-   - Background daemon thread (`BackgroundSync`) periodically reporting network statistics.
-5. **Disk File Management**:
-   - Automated export of notes to `.txt` files in `p2p_notes_storage/`.
-   - File listing, buffered reading, backup copying, safe deletion, and filename/size validation.
-6. **Relational Database Storage (JDBC + SQLite)**:
-   - Full CRUD operations on `users` and `notes` tables using `PreparedStatement`.
-7. **Embedded REST API Server**:
-   - Built-in lightweight HTTP server on port `7070` providing JSON endpoints for external web or mobile clients.
-8. **Interactive Console UI**:
-   - Comprehensive menu system with input validation, graceful error recovery, and clear formatting.
+### 1. 3D & Web Frontend (SHARENOTE)
+- **3D Knowledge Ecosystem (Hero)**: Interactive Three.js scene featuring floating 3D academic document cards, layered paper sheets, an inner glowing sphere, an outer wireframe knowledge icosahedron, orbiting rings, dynamic ray lines, and mouse-parallax inertia damping.
+- **3D Live Knowledge Mesh (Network Topology)**: Full-width interactive 3D node network visualizing peers (Alice, Bob, Dr. Charlie) and data packets streaming between nodes. Hovering over any node dynamically opens a 3D raycast tooltip showing live credentials and shared note metrics.
+- **Explore Notes Studio (`/explore`)**:
+  - Real-time search by keyword, title, professor, course code, or tags.
+  - Department filtering (CSE, AIML, ECE, Mechanical, General).
+  - Note-type filter (Lecture Notes vs Exam Cheat Sheets).
+  - Sorting by views (popularity), ratings, and recent uploads.
+- **Upload Note Studio (`/upload`)**:
+  - Drag-and-drop file upload zone with file-size detection and validation.
+  - Specialized forms for **Lecture Notes** (course code, professor, lecture number) vs **Cheat Sheets** (target exam, dynamic formula list, summary points).
+  - Animated progress bar and confetti celebration upon publishing.
+- **Peer Authentication (`/login` & `/register`)**:
+  - Single-click quick login for demo peers (`@alice_cse`, `@bob_aiml`, `@charlie_ece`).
+  - Registration with Student vs Faculty specialization (Student USN / semester vs Faculty designation / cabin).
+- **Personal Peer Dashboard (`/dashboard`)**:
+  - Academic credentials banner, reputation points counter (`+145 pts`), and activity metrics.
+  - Tabbed library: Notes Shared by Me, Downloaded Notes, and **Background Worker Thread Pool Monitor**.
+- **Deep Note Reader (`/notes/:id`)**:
+  - Full-text document reader, course instructor context, formulas list, and one-click `.txt` file export.
+- **Peer Profile View (`/profile/:id`)**:
+  - Peer academic credentials, badges, reputation score, and published notes list.
+
+### 2. Core Java OOP Backend
+- **Core OOP Principles**: Encapsulation, Polymorphism, Abstraction, and Interfaces (`Shareable`, `Authenticatable`, `TransferService`).
+- **Inheritance Trees**:
+  - Notes: `BaseNote` &rarr; `LectureNote` & `SummaryCheatSheet`.
+  - Peers: `User` &rarr; `StudentPeer` & `ProfessorPeer`.
+- **Collections Framework**: `ArrayList`, `HashMap`, `HashSet`, `Vector`, and `LinkedList` (as a `Queue`).
+- **Concurrency & Threads**:
+  - `TransferTask` (`Runnable`): Non-blocking concurrent file downloads with progress tracking and synchronized counters.
+  - `BackgroundSync` (`Thread` daemon): Periodic network snapshot telemetry.
+- **File Handling**: `FileManager` handling file creation, buffered reading, writing, copying, deletion, and path-traversal validation.
+- **Relational Persistence (JDBC + SQLite)**: Full parameterized CRUD on `users` and `notes` tables using `PreparedStatement`.
+- **Embedded REST API**: Lightweight HTTP server (`com.sun.net.httpserver.HttpServer`) running on port `7070`.
 
 ---
 
@@ -54,12 +81,15 @@ This application simulates a decentralized **Peer-to-Peer (P2P) network** where 
 
 | Layer | Technology |
 |---|---|
-| **Language** | Java SE (JDK 17 or higher; tested on JDK 27) |
+| **Frontend Framework** | React 18 / 19, TypeScript, Vite |
+| **Styling & Design System** | Tailwind CSS 3.4, PostCSS, Custom Design Tokens |
+| **3D Graphics & Canvas** | Three.js (WebGL with PCF Soft Shadows & Fog) |
+| **Icons & Effects** | Lucide React, Canvas Confetti |
+| **Client Routing & State** | React Router v7, React Context API (`AuthContext`) |
+| **Backend Language** | Java SE (JDK 17 or higher; verified on JDK 27) |
 | **Persistence (JDBC)** | SQLite (`sqlite-jdbc` 3.45.1.0) |
 | **Logging** | SLF4J (`slf4j-api` & `slf4j-simple`) |
 | **REST Server** | Java Standard Library `com.sun.net.httpserver.HttpServer` |
-| **File I/O** | Java Standard `java.io` (`BufferedReader`, `BufferedWriter`, `File`) |
-| **Concurrency** | Java Concurrency API (`Thread`, `Runnable`, `synchronized`) |
 | **Testing** | Automated Standalone Integration Suite (`SystemIntegrationTest.java`) |
 
 ---
@@ -68,87 +98,76 @@ This application simulates a decentralized **Peer-to-Peer (P2P) network** where 
 
 ```text
 PeerToPeerNotesSharing/
-├── lib/                               # Bundled JDBC and logging libraries
-│   ├── sqlite-jdbc-3.45.1.0.jar
-│   ├── slf4j-api-2.0.12.jar
-│   └── slf4j-simple-2.0.12.jar
-├── p2p_data/                          # SQLite persistent database directory
+├── frontend/                          # Award-Winning 3D Web Frontend
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── 3d/
+│   │   │   │   ├── KnowledgeHero3D.tsx    # 3D interactive hero ecosystem
+│   │   │   │   └── NetworkMesh3D.tsx      # 3D live knowledge network mesh
+│   │   │   ├── common/
+│   │   │   │   ├── CustomCursor.tsx       # Desktop magnetic cursor
+│   │   │   │   ├── NoteCard.tsx           # Differentiated note cards
+│   │   │   │   ├── PeerCard.tsx           # Peer profile cards
+│   │   │   │   └── StatCounter.tsx        # Animated metric counters
+│   │   │   ├── layout/
+│   │   │   │   ├── Navbar.tsx             # Floating glass navigation
+│   │   │   │   └── Footer.tsx             # Editorial dark footer
+│   │   │   ├── modals/
+│   │   │   │   └── NotePreviewModal.tsx   # Detailed note reader modal
+│   │   │   └── sections/
+│   │   │       ├── HeroSection.tsx
+│   │   │       ├── LiveNetworkSection.tsx
+│   │   │       ├── ExplorePreviewSection.tsx
+│   │   │       ├── HowItWorksSection.tsx
+│   │   │       ├── CommunitySection.tsx
+│   │   │       ├── StatsSection.tsx
+│   │   │       └── FastUploadCTA.tsx
+│   │   ├── context/
+│   │   │   └── AuthContext.tsx            # Global peer state & library
+│   │   ├── pages/
+│   │   │   ├── HomePage.tsx               # Landing page with 3D elements
+│   │   │   ├── ExplorePage.tsx            # Search & filter directory
+│   │   │   ├── UploadPage.tsx             # Drag-and-drop studio
+│   │   │   ├── LoginPage.tsx              # Peer authentication
+│   │   │   ├── RegisterPage.tsx           # Student / Faculty onboarding
+│   │   │   ├── DashboardPage.tsx          # Personal library & thread monitor
+│   │   │   ├── NoteDetailPage.tsx         # Full note view & download
+│   │   │   └── ProfilePage.tsx            # Contributor profile & badges
+│   │   ├── services/
+│   │   │   ├── api.ts                     # REST client connecting to :7070
+│   │   │   └── mockData.ts                # High-fidelity realistic fallback
+│   │   ├── types/
+│   │   │   └── index.ts                   # TypeScript interfaces
+│   │   ├── App.tsx                        # Router & master layout
+│   │   ├── index.css                      # Tailwind & typography directives
+│   │   └── main.tsx
+│   ├── package.json
+│   ├── tailwind.config.js
+│   └── vite.config.ts
+├── lib/                               # Bundled JDBC & logging libraries
+├── p2p_data/                          # SQLite persistent database storage
 ├── p2p_notes_storage/                 # Local filesystem note storage
-├── src/
+├── src/                               # Java Core Backend Source
 │   └── com/p2pnotes/
-│       ├── api/                       # REST API Layer
-│       │   └── NoteApiServer.java
-│       ├── app/                       # Application Entry Point & CLI
-│       │   └── Main.java
-│       ├── auth/                      # Authentication Contracts
-│       │   └── Authenticatable.java
-│       ├── db/                        # JDBC SQLite Persistence Layer
-│       │   └── DatabaseManager.java
-│       ├── exception/                 # Custom Exception Hierarchy
-│       │   ├── NoteException.java
-│       │   └── AuthenticationException.java
-│       ├── io/                        # File Handling Layer
-│       │   └── FileManager.java
-│       ├── model/                     # Core Domain Models
-│       │   ├── BaseNote.java          (Abstract Base Class)
-│       │   ├── LectureNote.java       (Subclass of BaseNote)
-│       │   ├── ProfessorPeer.java     (Subclass of User)
-│       │   ├── Shareable.java         (Interface)
-│       │   ├── StudentPeer.java       (Subclass of User)
-│       │   ├── SummaryCheatSheet.java (Subclass of BaseNote)
-│       │   └── User.java              (Base User & Authenticatable)
-│       ├── service/                   # Business Logic & Peer Directory
-│       │   └── PeerNetwork.java
-│       ├── thread/                    # Concurrency & Worker Threads
-│       │   ├── BackgroundSync.java    (Daemon Thread)
-│       │   └── TransferTask.java      (Runnable Task)
-│       ├── transfer/                  # Transfer Service Contract
-│       │   └── TransferService.java
-│       └── util/                      # Constants & String Helpers
-│           ├── AppConstants.java
-│           └── StringUtils.java
+│       ├── api/NoteApiServer.java
+│       ├── app/Main.java
+│       ├── auth/Authenticatable.java
+│       ├── db/DatabaseManager.java
+│       ├── exception/NoteException.java
+│       ├── io/FileManager.java
+│       ├── model/{BaseNote, LectureNote, SummaryCheatSheet, User, StudentPeer, ProfessorPeer}.java
+│       ├── service/PeerNetwork.java
+│       ├── thread/{TransferTask, BackgroundSync}.java
+│       └── util/{AppConstants, StringUtils}.java
 ├── test/
-│   └── com/p2pnotes/test/
-│       └── SystemIntegrationTest.java # 65 Automated Integration Tests
-├── .gitignore
-├── JAVA_CONCEPTS_DOCUMENTATION.md     # Detailed Java Concepts Mapping & Viva Guide
+│   └── com/p2pnotes/test/SystemIntegrationTest.java # 65 Automated Tests
+├── JAVA_CONCEPTS_DOCUMENTATION.md     # Detailed Java Concepts Table & Viva Guide
 └── README.md
 ```
 
 ---
 
-## 🗄️ Database Design (JDBC SQLite)
-
-### 1. `users` Table
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `username` | `TEXT` | `PRIMARY KEY` | Lowercase unique username |
-| `password` | `TEXT` | `NOT NULL` | Encrypted/hashed credential |
-| `full_name` | `TEXT` | `NOT NULL` | Peer's full name |
-| `department`| `TEXT` | `NOT NULL` | College department (CSE, AIML, etc.) |
-| `reputation_score` | `INTEGER` | `DEFAULT 10` | Reputation points earned |
-
-### 2. `notes` Table
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `note_id` | `INTEGER` | `PRIMARY KEY` | Auto-incrementing unique Note ID |
-| `title` | `TEXT` | `NOT NULL` | Title of the note |
-| `author` | `TEXT` | `NOT NULL` | Author name |
-| `department` | `TEXT` | `NOT NULL` | Department category |
-| `note_type` | `TEXT` | `NOT NULL` | `LECTURE` or `CHEATSHEET` |
-| `content` | `TEXT` | | Lecture body content |
-| `course_code` | `TEXT` | | Course code (e.g. PCC12CE07) |
-| `professor_name`| `TEXT` | | Instructor name |
-| `lecture_number`| `INTEGER` | | Lecture index |
-| `exam_target` | `TEXT` | | Targeted examination |
-| `key_formulas`| `TEXT` | | Semicolon-delimited formula strings |
-| `key_points_summary` | `TEXT` | | Semicolon-delimited summary bullets |
-| `access_count` | `INTEGER`| `DEFAULT 0` | View and access counter |
-| `owner_username` | `TEXT` | `FOREIGN KEY` | References `users(username)` |
-
----
-
-## 🌐 REST API Endpoints
+## 🌐 REST API Endpoints (Java Backend)
 
 The embedded HTTP server runs on **`http://localhost:7070`**:
 
@@ -165,135 +184,47 @@ The embedded HTTP server runs on **`http://localhost:7070`**:
 
 ---
 
-## 📚 Java Concepts Implemented
-
-A comprehensive breakdown is documented in **[`JAVA_CONCEPTS_DOCUMENTATION.md`](file:///c:/Users/leita/OneDrive/Desktop/PeerToPeerNotesSharing/JAVA_CONCEPTS_DOCUMENTATION.md)**:
-
-1. **Classes and Objects**: Modular domain objects (`User`, `LectureNote`, `SummaryCheatSheet`, `FileManager`, `DatabaseManager`, `NoteApiServer`).
-2. **Static Variables**: Shared counters (`AppConstants.totalDownloads`, `BaseNote.idCounter`, `TransferTask.activeTransfers`).
-3. **Private Variables & Encapsulation**: Private fields accessed strictly through validated getters/setters.
-4. **Inheritance**: Two distinct hierarchies (`StudentPeer` & `ProfessorPeer` extending `User`; `LectureNote` & `SummaryCheatSheet` extending `BaseNote`).
-5. **Method Overloading**: `searchNotes(...)` and `saveNoteToFile(...)` with multiple parameter signatures.
-6. **Method Overriding**: Polymorphic overrides of `displayDetails()`, `displayFullContent()`, `exportFormattedText()`, and `toString()`.
-7. **Abstract Methods**: `BaseNote.displayFullContent()` and `BaseNote.getNoteType()`.
-8. **Interfaces**: `Shareable`, `Authenticatable`, and `TransferService`.
-9. **Final Keyword**: `final class AppConstants`, `final int noteId`, and `final` accessor methods.
-10. **Super Keyword**: `super(...)` constructor calls and `super.displayDetails()` parent delegations.
-11. **Java Collections**: `ArrayList`, `HashMap`, `HashSet`, `Vector`, and `LinkedList` (as a `Queue`).
-12. **Strings & Functions**: `trim()`, `isEmpty()`, `toLowerCase()`, `toUpperCase()`, `contains()`, `substring()`, `split()`, `equals()`, `equalsIgnoreCase()`.
-13. **Multithreading**: `TransferTask` (`Runnable`), `BackgroundSync` (`Thread` daemon), synchronized blocks.
-14. **File Handling**: `File`, `BufferedReader`, `BufferedWriter`, `FileWriter`, `FileReader`, try-with-resources.
-15. **JDBC Connectivity**: SQLite database operations with `PreparedStatement` and `ResultSet`.
-16. **REST API**: Embedded HTTP server with JSON request/response handlers.
-17. **Exception Handling**: Custom `NoteException` and `AuthenticationException` hierarchies with `try-catch-finally`.
-
----
-
 ## 🚀 Installation & Execution Instructions
 
-### Prerequisites
-- Java Development Kit (JDK 17 or higher)
-- Windows / macOS / Linux terminal
-
-### 1. Compile the Project
-Open a terminal in the project root folder:
+### 1. Run the Frontend (React + Vite + 3D)
+Open a terminal in the `frontend` folder:
 ```bash
-# Windows PowerShell / CMD
-javac -cp ".;lib/*" -d bin -sourcepath src (Get-ChildItem -Path src -Filter *.java -Recurse | Select-Object -ExpandProperty FullName)
+cd frontend
 
-# Linux / macOS Bash
-javac -cp ".:lib/*" -d bin -sourcepath src $(find src -name "*.java")
+# Install dependencies (first time only)
+npm install
+
+# Start Vite dev server
+npm run dev
 ```
+Open **`http://localhost:5173`** in your browser to experience the 3D website.
 
-### 2. Run the Interactive Console Application
+To create an optimized production build:
 ```bash
-# Windows
-java -cp "bin;lib/*" com.p2pnotes.app.Main
-
-# Linux / macOS
-java -cp "bin:lib/*" com.p2pnotes.app.Main
+npm run build
 ```
-
-### 3. Pre-Seeded Demonstration Accounts
-| Username | Password | Full Name | Role | Department |
-|---|---|---|---|---|
-| `alice_cse` | `pass123` | Alice DSouza | Student (Sem 4) | CSE |
-| `bob_aiml` | `pass123` | Bob Fernandes | Student (Sem 4) | AIML |
-| `charlie_ece`| `pass123` | Dr. Charlie Pinto | Faculty (Assoc. Prof) | ECE |
 
 ---
 
-## 🧪 Testing Details & Verification
-
-The project includes an automated test suite containing **65 comprehensive integration tests** covering all 17 mandatory concepts.
-
-### Run Automated Tests:
+### 2. Run the Java Backend (Console & REST API Server)
+Open a terminal in the root directory:
 ```bash
-# Compile and execute the test runner
+# Compile Java source code
+javac -cp ".;lib/*" -d bin -sourcepath src (Get-ChildItem -Path src -Filter *.java -Recurse | Select-Object -ExpandProperty FullName)
+
+# Launch Java CLI application
+java -cp "bin;lib/*" com.p2pnotes.app.Main
+```
+From the CLI menu, choose Option 4 &rarr; Option 1 to start the REST API Server on port 7070. The frontend will automatically detect the server and switch the status pill to **`JAVA API: ONLINE`**.
+
+---
+
+### 3. Run Automated Verification Tests
+```bash
 javac -cp ".;bin;lib/*" -d bin test/com/p2pnotes/test/SystemIntegrationTest.java
 java -cp "bin;lib/*" com.p2pnotes.test.SystemIntegrationTest
 ```
-
-### Test Suite Output:
-```text
-===============================================================
-   RUNNING AUTOMATED SYSTEM INTEGRATION & VERIFICATION TESTS   
-===============================================================
---- Testing Core OOP & Inheritance ---
- [PASS] Student is instance of User
- [PASS] Professor is instance of User
- [PASS] Student role is STUDENT
- [PASS] Faculty role is FACULTY
- [PASS] Faculty starting reputation is 50
- [PASS] Encapsulation student ID
- [PASS] Encapsulation faculty cabin
---- Testing Method Overloading ---
- [PASS] searchNotes(keyword) works
- [PASS] searchNotes(keyword, dept) works
- [PASS] searchNotes(keyword, dept, minViews) works
- [PASS] saveNoteToFile(note) works
- [PASS] saveNoteToFile(note, filename) works
- [PASS] saveNoteToFile(filename, content) works
---- Testing Method Overriding & Polymorphism ---
- [PASS] LectureNote overriding getNoteType
- [PASS] SummaryCheatSheet overriding getNoteType
- [PASS] Polymorphic toString() on LectureNote
- [PASS] Polymorphic toString() on SummaryCheatSheet
---- Testing Static & Final Keywords ---
- [PASS] Static counter incremented
- [PASS] Final constant APP_NAME
- [PASS] Final constant MAX_FILE_SIZE_MB
- [PASS] Final noteId getter exists and > 0
---- Testing Java Collections ---
- [PASS] HashMap for peers lookup
- [PASS] Vector for publicNoteRegistry
- [PASS] Queue implemented with LinkedList
- [PASS] Queue received task
---- Testing String Functions ---
- [PASS] trim(), toLowerCase(), toUpperCase(), contains(), substring(), split(), equals(), equalsIgnoreCase(), isEmpty()
---- Testing File Handling ---
- [PASS] File written to disk, read back, copied, listed, deleted, validated
---- Testing Multithreading ---
- [PASS] Transfer task completed on thread
- [PASS] Transfer task successful
- [PASS] BackgroundSync is daemon thread and alive
---- Testing JDBC Database Operations ---
- [PASS] JDBC INSERT User, SELECT User, UPDATE User, INSERT Note, SELECT Note LIKE, DELETE Note, DELETE User
---- Testing REST API Endpoints ---
- [PASS] REST GET /api/stats
- [PASS] REST GET /api/notes
- [PASS] REST GET /api/notes/search
- [PASS] REST POST /api/users/register
- [PASS] REST POST /api/users/login
- [PASS] REST GET /api/notes/download
---- Testing Custom Exceptions & Handling ---
- [PASS] Custom NoteException caught with error code
- [PASS] Custom AuthenticationException caught
-===============================================================
- Tests Passed : 65 | Tests Failed : 0
- >>> ALL TESTS PASSED SUCCESSFULLY! 100% VERIFIED! <<<
-===============================================================
-```
+All **65 tests** pass automatically, verifying Core OOP, Collections, Multithreading, File I/O, JDBC SQLite, and REST endpoints.
 
 ---
 

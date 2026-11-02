@@ -412,3 +412,4 @@ public class AuthenticationException extends NoteException {
 
 ### 10. Why did you choose SQLite and Java's built-in HttpServer?
 > **Answer:** SQLite provides full relational ACID database capabilities through JDBC with zero external server installation (it stores data in a single local `.db` file). Java's built-in `com.sun.net.httpserver.HttpServer` provides lightweight, standards-compliant REST endpoints without adding heavy third-party framework dependencies, keeping the application lightweight, fast, and easy to run on any machine with a standard JDK.
+

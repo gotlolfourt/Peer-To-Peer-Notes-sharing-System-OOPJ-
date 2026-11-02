@@ -58,3 +58,4 @@ public class ProfessorPeer extends User {
         return super.toString() + " | Title: " + this.designation + " | Cabin: " + this.cabinNumber;
     }
 }
+

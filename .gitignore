@@ -2,6 +2,10 @@
 *.class
 bin/
 
+# Frontend dependencies and builds
+frontend/node_modules/
+frontend/dist/
+
 # Runtime data & note storage
 p2p_data/
 p2p_notes_storage/

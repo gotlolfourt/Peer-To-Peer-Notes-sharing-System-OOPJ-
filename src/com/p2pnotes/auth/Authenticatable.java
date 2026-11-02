@@ -24,3 +24,4 @@ public interface Authenticatable {
      */
     String getRole();
 }
+
